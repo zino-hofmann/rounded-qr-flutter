@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 
 ### Squared
 
-The radius of the modules is variable and can be removed completely by setting the `moduleRadius` parameter to `0.0`.
+The radius of the modules is variable and can be removed completely by setting the `moduleRadius` and `backgroundRadius` parameters to `0.0`.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
           child: RoundedQR(
             data: 'https://flutter.dev',
             moduleRadius: 0.0,
+            backgroundRadius: 0.0,
           ),
         ),
       ),

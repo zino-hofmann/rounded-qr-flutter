@@ -21,6 +21,9 @@ class RoundedQR extends StatefulWidget {
   /// The level or error correction.
   final int errorCorrectLevel;
 
+  /// The number of modules used for the quit zone.
+  final int quietZone;
+
   /// The color of the modules.
   /// NOTE: The modules need to be darker then the background to make sure all QR code scanners can read it correctly.
   final Color moduleColor;
@@ -32,6 +35,9 @@ class RoundedQR extends StatefulWidget {
   /// NOTE: The modules need to be darker then the background to make sure all QR code scanners can read it correctly.
   final Color backgroundColor;
 
+  /// The border radius of the background.
+  final double backgroundRadius;
+
   /// Image in the center of the QR code.
   final ImageProvider image;
 
@@ -41,9 +47,11 @@ class RoundedQR extends StatefulWidget {
     this.size = 100,
     this.typeNumber = 1,
     this.errorCorrectLevel = QrErrorCorrectLevel.M,
+    this.quietZone = 4,
     this.moduleColor = Colors.black,
     this.moduleRadius = 4.0,
     this.backgroundColor = Colors.white,
+    this.backgroundRadius = 8.0,
     this.image,
   }) : super(key: key);
 
@@ -87,9 +95,11 @@ class _RoundedQRState extends State<RoundedQR> {
           data: widget.data,
           typeNumber: widget.typeNumber,
           errorCorrectLevel: widget.errorCorrectLevel,
+          quietZone: widget.quietZone,
           moduleColor: widget.moduleColor,
           moduleRadius: widget.moduleRadius,
           backgroundColor: widget.backgroundColor,
+          backgroundRadius: widget.backgroundRadius,
         ),
       );
     }
@@ -101,26 +111,41 @@ class _RoundedQRState extends State<RoundedQR> {
         AsyncSnapshot snapshot,
       ) {
         if (snapshot.hasData) {
-          return Container(
-            child: CustomPaint(
-              size: Size(
-                widget.size,
-                widget.size,
-              ),
-              painter: RoundedQRPainter(
-                data: widget.data,
-                typeNumber: widget.typeNumber,
-                errorCorrectLevel: widget.errorCorrectLevel,
-                moduleColor: widget.moduleColor,
-                moduleRadius: widget.moduleRadius,
-                backgroundColor: widget.backgroundColor,
-                image: snapshot.data,
-              ),
+          return CustomPaint(
+            size: Size(
+              widget.size,
+              widget.size,
+            ),
+            painter: RoundedQRPainter(
+              data: widget.data,
+              typeNumber: widget.typeNumber,
+              errorCorrectLevel: widget.errorCorrectLevel,
+              quietZone: widget.quietZone,
+              moduleColor: widget.moduleColor,
+              moduleRadius: widget.moduleRadius,
+              backgroundColor: widget.backgroundColor,
+              backgroundRadius: widget.backgroundRadius,
+              image: snapshot.data,
             ),
           );
         }
 
-        return Container();
+        return CustomPaint(
+          size: Size(
+            widget.size,
+            widget.size,
+          ),
+          painter: RoundedQRPainter(
+            data: widget.data,
+            typeNumber: widget.typeNumber,
+            errorCorrectLevel: widget.errorCorrectLevel,
+            quietZone: widget.quietZone,
+            moduleColor: widget.moduleColor,
+            moduleRadius: widget.moduleRadius,
+            backgroundColor: widget.backgroundColor,
+            backgroundRadius: widget.backgroundRadius,
+          ),
+        );
       },
     );
   }

@@ -7,9 +7,11 @@ class RoundedQRPainter extends CustomPainter {
   final String data;
   final int typeNumber;
   final int errorCorrectLevel;
+  final int quietZone;
   final Color moduleColor;
   final double moduleRadius;
   final Color backgroundColor;
+  final double backgroundRadius;
 
   ui.Image image;
   int deletePixelCount = 0;
@@ -20,9 +22,11 @@ class RoundedQRPainter extends CustomPainter {
     @required this.data,
     @required this.typeNumber,
     @required this.errorCorrectLevel,
+    @required this.quietZone,
     @required this.moduleColor,
     @required this.moduleRadius,
     @required this.backgroundColor,
+    @required this.backgroundRadius,
     this.image,
   }) {
     _qrCode = QrCode(typeNumber, errorCorrectLevel)
@@ -35,48 +39,15 @@ class RoundedQRPainter extends CustomPainter {
     Canvas canvas,
     Size size,
   ) {
+    _paintBackground(
+      canvas,
+      size,
+    );
+
     if (image != null) {
-      if (typeNumber <= 2) {
-        deletePixelCount = typeNumber + 7;
-      } else if (typeNumber <= 4) {
-        deletePixelCount = typeNumber + 8;
-      } else {
-        deletePixelCount = typeNumber + 9;
-      }
-
-      var imageSize = Size(
-        image.width.toDouble(),
-        image.height.toDouble(),
-      );
-
-      var src = Alignment.center.inscribe(
-        imageSize,
-        Rect.fromLTWH(
-          0,
-          0,
-          image.width.toDouble(),
-          image.height.toDouble(),
-        ),
-      );
-
-      var dst = Alignment.center.inscribe(
-        Size(
-          size.height / 4,
-          size.height / 4,
-        ),
-        Rect.fromLTWH(
-          size.width / 3,
-          size.height / 3,
-          size.height / 3,
-          size.height / 3,
-        ),
-      );
-
-      canvas.drawImageRect(
-        image,
-        src,
-        dst,
-        Paint(),
+      _paintImage(
+        canvas,
+        size,
       );
     }
 
@@ -94,19 +65,15 @@ class RoundedQRPainter extends CustomPainter {
       ..color = moduleColor
       ..isAntiAlias = true;
 
-    var _paintBackground = Paint()
-      ..style = PaintingStyle.fill
-      ..color = backgroundColor
-      ..isAntiAlias = true;
+    var matrixSize = _qrCode.moduleCount + 2;
+    var matrix = List<List>(matrixSize);
 
-    var matrix = List<List>(_qrCode.moduleCount + 2);
-
-    for (var i = 0; i < _qrCode.moduleCount + 2; i++) {
-      matrix[i] = List(_qrCode.moduleCount + 2);
+    for (var i = 0; i < matrixSize; i++) {
+      matrix[i] = List(matrixSize);
     }
 
-    for (var x = 0; x < _qrCode.moduleCount + 2; x++) {
-      for (var y = 0; y < _qrCode.moduleCount + 2; y++) {
+    for (var x = 0; x < matrixSize; x++) {
+      for (var y = 0; y < matrixSize; y++) {
         matrix[x][y] = false;
       }
     }
@@ -130,14 +97,14 @@ class RoundedQRPainter extends CustomPainter {
       }
     }
 
-    var pixelSize = size.width / _qrCode.moduleCount;
+    var pixelSize = size.width / (_qrCode.moduleCount + 2 * quietZone);
 
     for (var x = 0; x < _qrCode.moduleCount; x++) {
       for (var y = 0; y < _qrCode.moduleCount; y++) {
         if (matrix[y + 1][x + 1]) {
           final squareRect = Rect.fromLTWH(
-            x * pixelSize,
-            y * pixelSize,
+            (x + quietZone) * pixelSize,
+            (y + quietZone) * pixelSize,
             pixelSize,
             pixelSize,
           );
@@ -155,7 +122,7 @@ class RoundedQRPainter extends CustomPainter {
           _setShapeInner(
             x + 1,
             y + 1,
-            _paintBackground,
+            _paint,
             matrix,
             canvas,
             pixelSize,
@@ -169,6 +136,7 @@ class RoundedQRPainter extends CustomPainter {
     Offset p1,
     Offset p2,
     Offset p3,
+    Paint paint,
     Canvas canvas,
   ) {
     var path = Path();
@@ -195,9 +163,7 @@ class RoundedQRPainter extends CustomPainter {
 
     canvas.drawPath(
       path,
-      Paint()
-        ..style = PaintingStyle.fill
-        ..color = moduleColor,
+      paint,
     );
   }
 
@@ -210,8 +176,8 @@ class RoundedQRPainter extends CustomPainter {
     Canvas canvas,
     double pixelSize,
   ) {
-    final widthY = pixelSize * (y - 1);
-    final heightX = pixelSize * (x - 1);
+    final widthY = pixelSize * (y - 1 + quietZone);
+    final heightX = pixelSize * (x - 1 + quietZone);
 
     // bottom right check
     if (matrix[y + 1][x] && matrix[y][x + 1] && matrix[y + 1][x + 1]) {
@@ -232,6 +198,7 @@ class RoundedQRPainter extends CustomPainter {
         p1,
         p2,
         p3,
+        paint,
         canvas,
       );
     }
@@ -255,6 +222,7 @@ class RoundedQRPainter extends CustomPainter {
         p1,
         p2,
         p3,
+        paint,
         canvas,
       );
     }
@@ -278,6 +246,7 @@ class RoundedQRPainter extends CustomPainter {
         p1,
         p2,
         p3,
+        paint,
         canvas,
       );
     }
@@ -301,6 +270,7 @@ class RoundedQRPainter extends CustomPainter {
         p1,
         p2,
         p3,
+        paint,
         canvas,
       );
     }
@@ -390,7 +360,7 @@ class RoundedQRPainter extends CustomPainter {
       ..isAntiAlias = true;
 
     // size of point
-    final pixelSize = size.width / _qrCode.moduleCount;
+    final pixelSize = size.width / (_qrCode.moduleCount + 2 * quietZone);
 
     for (var x = 0; x < _qrCode.moduleCount; x++) {
       for (var y = 0; y < _qrCode.moduleCount; y++) {
@@ -405,8 +375,8 @@ class RoundedQRPainter extends CustomPainter {
         if (_qrCode.isDark(y, x)) {
           canvas.drawRect(
             Rect.fromLTWH(
-              x * pixelSize,
-              y * pixelSize,
+              (x + quietZone) * pixelSize,
+              (y + quietZone) * pixelSize,
               pixelSize,
               pixelSize,
             ),
@@ -414,6 +384,87 @@ class RoundedQRPainter extends CustomPainter {
           );
         }
       }
+    }
+  }
+
+  void _paintImage(
+    Canvas canvas,
+    Size size,
+  ) {
+    if (typeNumber <= 2) {
+      deletePixelCount = typeNumber + 7;
+    } else if (typeNumber <= 4) {
+      deletePixelCount = typeNumber + 8;
+    } else {
+      deletePixelCount = typeNumber + 9;
+    }
+
+    var imageSize = Size(
+      image.width.toDouble(),
+      image.height.toDouble(),
+    );
+
+    var src = Alignment.center.inscribe(
+      imageSize,
+      Rect.fromLTWH(
+        0,
+        0,
+        image.width.toDouble(),
+        image.height.toDouble(),
+      ),
+    );
+
+    var dst = Alignment.center.inscribe(
+      Size(
+        size.height / 4,
+        size.height / 4,
+      ),
+      Rect.fromLTWH(
+        size.width / 3,
+        size.height / 3,
+        size.height / 3,
+        size.height / 3,
+      ),
+    );
+
+    canvas.drawImageRect(
+      image,
+      src,
+      dst,
+      Paint(),
+    );
+  }
+
+  void _paintBackground(
+    Canvas canvas,
+    Size size,
+  ) {
+    var _paintBackground = Paint()
+      ..style = PaintingStyle.fill
+      ..color = backgroundColor
+      ..isAntiAlias = true;
+
+    if (backgroundRadius > 0.0) {
+      canvas.drawRRect(
+        RRect.fromLTRBR(
+          0,
+          0,
+          size.width,
+          size.height,
+          Radius.circular(backgroundRadius),
+        ),
+        _paintBackground,
+      );
+    } else {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          0,
+          0,
+          size.width,
+          size.height,
+        ),
+        _paintBackground,
+      );
     }
   }
 
