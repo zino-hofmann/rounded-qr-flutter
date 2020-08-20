@@ -1,3 +1,7 @@
+## [1.1.0+1] - 10-08-2020.
+
+- Fixed the licence path in the readme.
+
 ## [1.1.0] - 18-08-2020.
 
 - Added the option to set the radius of the background.
