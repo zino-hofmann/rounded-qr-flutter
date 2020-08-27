@@ -2,7 +2,7 @@
 
 ## Default
 
-By default the modules in the QR code will have rounded corners with a radius of `4.0`.
+By default the modules in the QR code will have rounded corners with a radius of `2.0`.
 
 ```dart
 import 'package:flutter/material.dart';

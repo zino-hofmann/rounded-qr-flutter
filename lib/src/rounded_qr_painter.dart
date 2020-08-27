@@ -98,15 +98,16 @@ class RoundedQRPainter extends CustomPainter {
     }
 
     var pixelSize = size.width / (_qrCode.moduleCount + 2 * quietZone);
+    var gapFill = pixelSize / 40;
 
     for (var x = 0; x < _qrCode.moduleCount; x++) {
       for (var y = 0; y < _qrCode.moduleCount; y++) {
         if (matrix[y + 1][x + 1]) {
           final squareRect = Rect.fromLTWH(
-            (x + quietZone) * pixelSize,
-            (y + quietZone) * pixelSize,
-            pixelSize,
-            pixelSize,
+            ((x + quietZone) * pixelSize) - gapFill,
+            ((y + quietZone) * pixelSize) - gapFill,
+            pixelSize + (2 * gapFill),
+            pixelSize + (2 * gapFill),
           );
 
           _setShape(
@@ -182,7 +183,7 @@ class RoundedQRPainter extends CustomPainter {
     // bottom right check
     if (matrix[y + 1][x] && matrix[y][x + 1] && matrix[y + 1][x + 1]) {
       final p1 = Offset(
-        heightX + pixelSize - (0.25 * pixelSize),
+        heightX + pixelSize - (moduleRadius / 6 * pixelSize),
         widthY + pixelSize,
       );
       final p2 = Offset(
@@ -191,7 +192,7 @@ class RoundedQRPainter extends CustomPainter {
       );
       final p3 = Offset(
         heightX + pixelSize,
-        widthY + pixelSize - (0.25 * pixelSize),
+        widthY + pixelSize - (moduleRadius / 6 * pixelSize),
       );
 
       _drawCurve(
@@ -207,14 +208,14 @@ class RoundedQRPainter extends CustomPainter {
     if (matrix[y - 1][x] && matrix[y][x - 1] && matrix[y - 1][x - 1]) {
       final p1 = Offset(
         heightX,
-        widthY + (0.25 * pixelSize),
+        widthY + (moduleRadius / 6 * pixelSize),
       );
       final p2 = Offset(
         heightX,
         widthY,
       );
       final p3 = Offset(
-        heightX + (0.25 * pixelSize),
+        heightX + (moduleRadius / 6 * pixelSize),
         widthY,
       );
 
@@ -231,14 +232,14 @@ class RoundedQRPainter extends CustomPainter {
     if (matrix[y + 1][x] && matrix[y][x - 1] && matrix[y + 1][x - 1]) {
       final p1 = Offset(
         heightX,
-        widthY + pixelSize - (0.25 * pixelSize),
+        widthY + pixelSize - (moduleRadius / 6 * pixelSize),
       );
       final p2 = Offset(
         heightX,
         widthY + pixelSize,
       );
       final p3 = Offset(
-        heightX + (0.25 * pixelSize),
+        heightX + (moduleRadius / 6 * pixelSize),
         widthY + pixelSize,
       );
 
@@ -254,7 +255,7 @@ class RoundedQRPainter extends CustomPainter {
     // top right check
     if (matrix[y - 1][x] && matrix[y][x + 1] && matrix[y - 1][x + 1]) {
       final p1 = Offset(
-        heightX + pixelSize - (0.25 * pixelSize),
+        heightX + pixelSize - (moduleRadius / 6 * pixelSize),
         widthY,
       );
       final p2 = Offset(
@@ -263,7 +264,7 @@ class RoundedQRPainter extends CustomPainter {
       );
       final p3 = Offset(
         heightX + pixelSize,
-        widthY + (0.25 * pixelSize),
+        widthY + (moduleRadius / 6 * pixelSize),
       );
 
       _drawCurve(
@@ -299,10 +300,10 @@ class RoundedQRPainter extends CustomPainter {
       canvas.drawRRect(
         RRect.fromRectAndCorners(
           squareRect,
-          bottomRight: Radius.circular(moduleRadius / 2),
-          bottomLeft: Radius.circular(moduleRadius / 2),
-          topLeft: Radius.circular(moduleRadius / 2),
-          topRight: Radius.circular(moduleRadius / 2),
+          bottomRight: Radius.circular(moduleRadius),
+          bottomLeft: Radius.circular(moduleRadius),
+          topLeft: Radius.circular(moduleRadius),
+          topRight: Radius.circular(moduleRadius),
         ),
         paint,
       );
@@ -361,6 +362,7 @@ class RoundedQRPainter extends CustomPainter {
 
     // size of point
     final pixelSize = size.width / (_qrCode.moduleCount + 2 * quietZone);
+    var gapFill = pixelSize / 40;
 
     for (var x = 0; x < _qrCode.moduleCount; x++) {
       for (var y = 0; y < _qrCode.moduleCount; y++) {
@@ -375,10 +377,10 @@ class RoundedQRPainter extends CustomPainter {
         if (_qrCode.isDark(y, x)) {
           canvas.drawRect(
             Rect.fromLTWH(
-              (x + quietZone) * pixelSize,
-              (y + quietZone) * pixelSize,
-              pixelSize,
-              pixelSize,
+              ((x + quietZone) * pixelSize) - gapFill,
+              ((y + quietZone) * pixelSize) - gapFill,
+              pixelSize + (2 * gapFill),
+              pixelSize + (2 * gapFill),
             ),
             _paint,
           );

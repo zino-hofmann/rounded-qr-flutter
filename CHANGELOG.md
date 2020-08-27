@@ -1,3 +1,7 @@
+## [1.1.1] - 27-08-2020.
+
+- Fixed an issue where small lines between modules were visible.
+
 ## [1.1.0+1] - 10-08-2020.
 
 - Fixed the licence path in the readme.

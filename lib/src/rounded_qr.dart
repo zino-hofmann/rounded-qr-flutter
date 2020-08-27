@@ -49,7 +49,7 @@ class RoundedQR extends StatefulWidget {
     this.errorCorrectLevel = QrErrorCorrectLevel.M,
     this.quietZone = 4,
     this.moduleColor = Colors.black,
-    this.moduleRadius = 4.0,
+    this.moduleRadius = 2.0,
     this.backgroundColor = Colors.white,
     this.backgroundRadius = 8.0,
     this.image,
